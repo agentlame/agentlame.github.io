@@ -7,7 +7,7 @@
         lastget = JSON.parse(localStorage['Toolbox.cache.lastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
  
-    var TBUtils.version = 1; 
+    TBUtils.version = 1; 
     
     //Private Function
     TBUtils.getModSubs = function(callback) {
