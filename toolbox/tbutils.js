@@ -60,18 +60,6 @@
         }
         
     };
- 
-    //Public Function
-    TBUtils.helloWorld = function (message) {
- 
-        helloWorldMessage = message;
-        
-        //call our private method
-        //Prints "Hello Javascript" to the console
-        sayHi();
-        
-        return 'return';
-    };
     
     // Because normal .sort() is case sensitive.
     TBUtils.saneSort = function(arr){
@@ -217,5 +205,9 @@
             }, 500);
         });
     };
- 
+    
+    TBUtils.compressHTML = function(src) {
+        return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
+    };
+    
 } (TBUtils = window.TBUtils || {}));
