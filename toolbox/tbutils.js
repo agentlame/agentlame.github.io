@@ -1,5 +1,5 @@
 (function (TBUtils) {
-    console.log(TBUtils)
+    //console.log(TBUtils)
     if (TBUtils !== undefined) return;
     console.log(TBUtils)
     //Private variables
