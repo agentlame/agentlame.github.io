@@ -279,4 +279,4 @@
         return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
 
-}(TBUtils = window.TBUtils || {}));
+}(TBUtils = TBUtils || {}));
