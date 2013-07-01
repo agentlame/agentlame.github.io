@@ -1,6 +1,6 @@
 (function (TBUtils) {
     //console.log(TBUtils)
-    if (TBUtils !== undefined) return;
+    if (typeof TBUtils !== "undefined") return;
     console.log(TBUtils)
     //Private variables
     var mySubs = [],
