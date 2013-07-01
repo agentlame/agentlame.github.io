@@ -1,7 +1,4 @@
 (function (TBUtils) {
-    console.log(TBUtils)
-    if (TBUtils !== {}) return;
-    console.log(TBUtils)
     //Private variables
     var mySubs = [],
         modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
