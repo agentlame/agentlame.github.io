@@ -11,6 +11,7 @@
     TBUtils.WIKI_PAGE_UNKNOWN = 'WIKI_PAGE_UNKNOWN';
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
+    TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
     TBUtils.noteCache = [],
     TBUtils.configCache = [],
     TBUtils.noConfig = [],
@@ -101,6 +102,10 @@
         var user = $(thing).find('.author:first').text(),
             subreddit = $('.titlebox h1.redditname a').text(),
             permalink = $(thing).closest('.entry').find('a.bylink').attr('href');
+            
+        if (TBUtils.isEditUserPage && !user) {
+            user = $(thing).closest('.user').find('a:first').text();
+        }
 
         // Try again.
         if (!user) {
