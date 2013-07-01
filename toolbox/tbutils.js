@@ -1,6 +1,6 @@
 (function (TBUtils) {
     //console.log(TBUtils)
-    if (typeof TBUtils !== "undefined") return;
+    if (TBUtils !== {}) return;
     console.log(TBUtils)
     //Private variables
     var mySubs = [],
@@ -279,4 +279,4 @@
         return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
 
-}(TBUtils = TBUtils || {}));
+}(TBUtils = window.TBUtils || {}));
