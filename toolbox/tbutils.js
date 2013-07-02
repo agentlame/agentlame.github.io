@@ -1,23 +1,4 @@
-(function (TBUtils) {
-    if (window.TBUadded)
-    {
-        console.log('tbutils found')
-        return;
-    }
-    
-    window.TBUadded = true;
-    
-    var fooObjects = [];
-    for(var key in window) {
-        if (window[key] === TBUtils) {
-            fooObjects.push(window[key]);
-           console.log(window[key])
-        }
-    }
-    
-    console.log(fooObjects.length)
-    
-    
+(function (TBUtils) {    
     console.log('tbutils loaded');
     //Private variables
     var mySubs = [],
