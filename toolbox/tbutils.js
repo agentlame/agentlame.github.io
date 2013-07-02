@@ -1,4 +1,9 @@
-(function (TBUtils) {    
+(function (TBUtils) { 
+    if (window.TBUadded)
+    {
+        this = null;
+        return;
+    }
     console.log('tbutils loaded');
     //Private variables
     var mySubs = [],
