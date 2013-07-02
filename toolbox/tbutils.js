@@ -1,4 +1,11 @@
 (function (TBUtils) {
+    if (window.TBUadded)
+    {
+        return;
+    }
+    
+    window.TBUadded = true;
+    
     var fooObjects = [];
     for(var key in window) {
         if (window[key] === TBUtils) {
