@@ -1,4 +1,11 @@
 (function (TBUtils) {
+    for(var key in window) {
+        if (window[key] === TBUtils) {
+           return;
+        }
+    }
+    
+    
     console.log('tbutils loaded');
     //Private variables
     var mySubs = [],
