@@ -1,5 +1,5 @@
 (function (TBUtils) { 
-    console.log('tbutils loaded');
+    console.log('tbutils loaded 2');
     //Private variables
     var mySubs = [],
         modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
