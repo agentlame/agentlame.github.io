@@ -1,9 +1,13 @@
 (function (TBUtils) {
+    var fooObjects = [];
     for(var key in window) {
         if (window[key] === TBUtils) {
+            fooObjects.push(window[key]);
            console.log(window[key])
         }
     }
+    
+    console.log(fooObjects.length)
     
     
     console.log('tbutils loaded');
