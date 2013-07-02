@@ -1,6 +1,7 @@
 (function (TBUtils) {
     if (window.TBUadded)
     {
+        console.log('tbutils found')
         return;
     }
     
