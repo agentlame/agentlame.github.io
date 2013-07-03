@@ -15,8 +15,8 @@
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
     TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
     TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
-    TBUtils.noConfig = [],
-    TBUtils.noNotes = [],
+    TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '{}'),
+    TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '{}'),
     TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
     
     /*
@@ -301,6 +301,8 @@
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
         localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
+        localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
+        localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
         localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
 
     };
