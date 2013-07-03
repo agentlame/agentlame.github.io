@@ -1,9 +1,10 @@
 (function (TBUtils) { 
     //Private variables
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
-        lastget = JSON.parse(localStorage['Toolbox.cache.lastget'] || -1),
+        lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
         id = Math.floor((Math.random()*100)+1);
+        newget = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged);
         
     // Public variables
     TBUtils.version = 1;
@@ -17,6 +18,18 @@
     TBUtils.noConfig = [],
     TBUtils.noNotes = [],
     TBUtils.mySubs = [];
+    
+    if (localStorage['Toolbox.cache.moderatedsubs']) {
+        TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
+    }
+    
+    if (localStorage['Toolbox.cache.configcache'] && !newget) {
+        TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache']);
+    }
+    
+    if (localStorage['Toolbox.cache.notecache'] && !newget) {
+        TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache']);
+    }
 
     TBUtils.usernotes = {
         ver: 1,
@@ -44,12 +57,8 @@
     //Private functions
     TBUtils.getModSubs = function(callback) {
 
-        if (localStorage['Toolbox.cache.moderatedsubs']) {
-            TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
-        }
-
         // If it has been more than ten minutes, refresh mod cache.
-        if (TBUtils.mySubs.length < 1 || (new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged) {
+        if (TBUtils.mySubs.length < 1 || newget) {
             TBUtils.mySubs = []; //resent list.
             getSubs(modMineURL);
         } else {
@@ -85,7 +94,7 @@
 
                 // Update the cache.
                 localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
-                localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+                localStorage['Toolbox.cache.subslastget'] = JSON.stringify(lastget);
                 localStorage['Toolbox.cache.cachename'] = cachename;
 
                 // Go!
@@ -281,6 +290,16 @@
 
     TBUtils.compressHTML = function(src) {
         return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
+    };
+    
+    window.onbeforeunload = function () {
+        lastget = new Date().getTime();
+        
+        localStorage['Toolbox.cache.cachename'] = reddit.logged;
+        localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
+        localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
+        localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+
     };
 
 }(TBUtils = window.TBUtils || {}));
