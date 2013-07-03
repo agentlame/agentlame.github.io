@@ -1,1 +1,310 @@
-(function(e){var t="http://www.reddit.com/subreddits/mine/moderator.json?count=100",n=JSON.parse(localStorage["Toolbox.cache.subslastget"]||-1),r=localStorage["Toolbox.cache.cachename"]||"";id=Math.floor(Math.random()*100+1);newget=((new Date).getTime()-n)/(1e3*60)>30||r!=reddit.logged;e.version=1;e.NO_WIKI_PAGE="NO_WIKI_PAGE";e.WIKI_PAGE_UNKNOWN="WIKI_PAGE_UNKNOWN";e.isModmail=location.pathname.match(/\/message\/(?:moderator)\/?/);e.isModpage=location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),e.isEditUserPage=location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),e.noteCache=JSON.parse(localStorage["Toolbox.cache.notecache"]||"{}"),e.configCache=JSON.parse(localStorage["Toolbox.cache.configcache"]||"{}"),e.noConfig=JSON.parse(localStorage["Toolbox.cache.noconfig"]||"[]"),e.noNotes=JSON.parse(localStorage["Toolbox.cache.nonotes"]||"[]"),e.mySubs=JSON.parse(localStorage["Toolbox.cache.moderatedsubs"]||"[]");e.usernotes={ver:1,users:[]};e.note={note:"",time:"",mod:"",link:""};e.config={ver:1,domainTags:"",removalReasons:"",modMacros:""};e.getID=function(e){e(id)};e.getModSubs=function(i){function s(e){$.getJSON(e,function(e){o(e.data.children,e.data.after)})}function o(o,u){$(o).each(function(t){var t=this.data.display_name.trim();if($.inArray(t,e.mySubs)===-1)e.mySubs.push(t)});if(u){var a=t+"&after="+u;s(a)}else{n=(new Date).getTime();r=reddit.logged;e.mySubs=e.saneSort(e.mySubs);localStorage["Toolbox.cache.moderatedsubs"]=JSON.stringify(e.mySubs);localStorage["Toolbox.cache.subslastget"]=JSON.stringify(n);localStorage["Toolbox.cache.cachename"]=r;i()}}if(e.mySubs.length<1||newget){e.mySubs=[];s(t)}else{e.mySubs=e.saneSort(e.mySubs);i()}};e.saneSort=function(e){return e.sort(function(e,t){if(e.toLowerCase()<t.toLowerCase())return-1;if(e.toLowerCase()>t.toLowerCase())return 1;return 0})};e.getThingInfo=function(t,n){var r=$(t).find(".author:first").text(),i=$(".titlebox h1.redditname a").text(),s=$(t).closest(".entry").find("a.bylink").attr("href");if(e.isEditUserPage&&!r){r=$(t).closest(".user").find("a:first").text()}if(!r){r=$(t).closest(".entry").find(".author:first").text()}if(!s){s=$(t).closest(".entry").find("a.comments").attr("href")}if(!i){i=$(t).closest(".entry").find(".subreddit").text()}if(!i){i=$(t).closest(".thing").find(".subreddit").text()}if(!i){i=$(t).find(".head a:last").text().replace("/r/","").replace("/","").trim();if(!r&&$(t).find(".remove-button").text()===""){r=reddit.logged;if(!i){i=$(t).closest(".message-parent").find(".correspondent.reddit.rounded a").text().replace("/r/","").replace("[-]","").replace("[+]","").trim()}}}if(n&&$.inArray(i,e.mySubs)===-1){i=""}if(r=="[deleted]"){r=""}return{subreddit:i,user:r,permalink:s}};e.forEachChunked=function(e,t,n,r,i){function u(){for(var o=Math.min(e.length,s+t);s<o;s++){var a=r(e[s],s,e);if(a===false)return}if(s<e.length){window.setTimeout(u,n)}else{if(i)i()}}if(e==null)return;if(t==null||t<1)return;if(n==null||n<0)return;if(r==null)return;var s=0;var o=e.length;window.setTimeout(u,n)};e.postToWiki=function(e,t,n,r,i,s){if(r){n=JSON.stringify(n,undefined,2)}$.post("/r/"+t+"/api/wiki/edit",{content:n,page:e,reason:"updated via toolbox config",uh:reddit.modhash}).error(function(e){s(false,e.responseText)}).success(function(){s(true);if(i){$.post("/api/compose",{to:"automoderator",uh:reddit.modhash,subject:t,text:"update"}).success(function(){alert("sucessfully sent update PM to automoderator")}).error(function(){alert("error sending update PM to automoderator");window.location="http://www.reddit.com/message/compose/?to=AutoModerator&subject="+t+"&message=update"})}setTimeout(function(){$.post("/r/"+t+"/wiki/settings/"+e,{permlevel:2,uh:reddit.modhash}).error(function(n){alert("error setting wiki page to mod only access");window.location="http://www.reddit.com/r/"+t+"/wiki/settings/"+e})},500)})};e.readFromWiki=function(t,n,r,i){$.getJSON("http://www.reddit.com/r/"+t+"/wiki/"+n+".json",function(t){var n=t.data.content_md;if(!n){i(e.NO_WIKI_PAGE);return}if(r){n=JSON.parse(n);if(n){i(n)}else{i(e.NO_WIKI_PAGE)}return}i(n);return}).error(function(t){var n=JSON.parse(t.responseText).reason||"";if(n=="PAGE_NOT_CREATED"||n=="WIKI_DISABLED"){i(e.NO_WIKI_PAGE)}else{i(e.WIKI_PAGE_UNKNOWN)}})};e.compressHTML=function(e){return e.replace(/(\n+|\s+)?</g,"<").replace(/>(\n+|\s+)?/g,">").replace(/&/g,"&").replace(/\n/g,"").replace(/child" >  False/,'child">')};window.onbeforeunload=function(){n=(new Date).getTime();localStorage["Toolbox.cache.cachename"]=reddit.logged;localStorage["Toolbox.cache.configcache"]=JSON.stringify(e.configCache);localStorage["Toolbox.cache.notecache"]=JSON.stringify(e.noteCache);localStorage["Toolbox.cache.noconfig"]=JSON.stringify(e.noConfig);localStorage["Toolbox.cache.nonotes"]=JSON.stringify(e.noNotes);localStorage["Toolbox.cache.lastget"]=JSON.stringify(n)}})(TBUtils=window.TBUtils||{})
+(function (TBUtils) { 
+    //Private variables
+    var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
+        lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
+        cachename = localStorage['Toolbox.cache.cachename'] || '';
+        id = Math.floor((Math.random()*100)+1);
+        newget = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged);
+        
+    // Public variables
+    TBUtils.version = 1;
+    TBUtils.NO_WIKI_PAGE = 'NO_WIKI_PAGE';
+    TBUtils.WIKI_PAGE_UNKNOWN = 'WIKI_PAGE_UNKNOWN';
+    TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
+    TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
+    TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
+    TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
+    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
+    TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
+    TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
+    TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
+    
+    /*
+    if (localStorage['Toolbox.cache.moderatedsubs']) {
+        TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
+    }
+    
+    if (localStorage['Toolbox.cache.configcache']) {
+        TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache']);
+    }
+    
+    if (localStorage['Toolbox.cache.notecache']) {
+        TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache']);
+    }
+    */
+    
+
+    TBUtils.usernotes = {
+        ver: 1,
+        users: [] //typeof userNotes
+    };
+
+    TBUtils.note = {
+        note: '',
+        time: '',
+        mod: '',
+        link: ''
+    };
+
+    TBUtils.config = {
+        ver: 1,
+        domainTags: '',
+        removalReasons: '',
+        modMacros: '',
+    };
+    
+    TBUtils.getID = function(callback) {
+        callback(id);
+    };
+
+    //Private functions
+    TBUtils.getModSubs = function(callback) {
+
+        // If it has been more than ten minutes, refresh mod cache.
+        if (TBUtils.mySubs.length < 1 || (new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged) {
+            TBUtils.mySubs = []; //resent list.
+            getSubs(modMineURL);
+        } else {
+            TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
+
+            // Go!
+            callback();
+        }
+
+        function getSubs(URL) {
+            $.getJSON(URL, function (json) {
+                getSubsResult(json.data.children, json.data.after);
+            });
+        }
+
+        // Callback because reddits/mod/mine is paginated.
+        function getSubsResult(subs, after) {
+            $(subs).each(function (sub) {
+                var sub = this.data.display_name.trim();
+                if ($.inArray(sub, TBUtils.mySubs) === -1)
+                TBUtils.mySubs.push(sub);
+            });
+
+            if (after) {
+                var URL = modMineURL + '&after=' + after;
+                getSubs(URL);
+            } else {
+                // We have all our subs.  Start adding ban links.
+                lastget = new Date().getTime();
+                cachename = reddit.logged;
+
+                TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
+
+                // Update the cache.
+                localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
+                localStorage['Toolbox.cache.subslastget'] = JSON.stringify(lastget);
+                localStorage['Toolbox.cache.cachename'] = cachename;
+
+                // Go!
+                callback();
+            }
+        }
+
+    };
+
+    // Because normal .sort() is case sensitive.
+    TBUtils.saneSort = function(arr) {
+        return arr.sort(function (a, b) {
+            if (a.toLowerCase() < b.toLowerCase()) return -1;
+            if (a.toLowerCase() > b.toLowerCase()) return 1;
+            return 0;
+        });
+    };
+
+    TBUtils.getThingInfo = function(thing, modCheck) {
+
+        var user = $(thing).find('.author:first').text(),
+            subreddit = $('.titlebox h1.redditname a').text(),
+            permalink = $(thing).closest('.entry').find('a.bylink').attr('href');
+            
+        if (TBUtils.isEditUserPage && !user) {
+            user = $(thing).closest('.user').find('a:first').text();
+        }
+
+        // Try again.
+        if (!user) {
+            user = $(thing).closest('.entry').find('.author:first').text();
+        }
+
+        // Might be a submission.
+        if (!permalink) {
+            permalink = $(thing).closest('.entry').find('a.comments').attr('href');
+        }
+
+        if (!subreddit) {
+            subreddit = $(thing).closest('.entry').find('.subreddit').text();
+        }
+
+        if (!subreddit) {
+            subreddit = $(thing).closest('.thing').find('.subreddit').text();
+        }
+
+        // If we still don't have a sub, we're in mod mail
+        if (!subreddit) {
+            subreddit = $(thing).find('.head a:last').text().replace('/r/', '').replace('/', '').trim();
+
+            //user: there is still a chance that this is mod mail, but we're us.
+            //This is a weird palce to go about this, and the conditions are strange,
+            //but if we're going to assume we're us, we better make damned well sure that is likely the case.
+            if (!user && $(thing).find('.remove-button').text() === '') {
+                user = reddit.logged;
+
+                if (!subreddit) {
+                    // Find a better way, I double dog dare ya!
+                    subreddit = $(thing).closest('.message-parent').find('.correspondent.reddit.rounded a').text()
+                        .replace('/r/', '').replace('[-]', '').replace('[+]', '').trim();
+                }
+            }
+        }
+
+        // Not a mod, reset current sub.
+        if (modCheck && $.inArray(subreddit, TBUtils.mySubs) === -1) {
+            subreddit = '';
+        }
+
+        if (user == '[deleted]') {
+            user = '';
+        }
+
+        return {
+            subreddit: subreddit,
+            user: user,
+            permalink: permalink
+        };
+    };
+
+    // Prevent page lock while parsing things.  (stolen from RES)
+    TBUtils.forEachChunked = function(array, chunkSize, delay, call, complete) {
+        if (array == null) return;
+        if (chunkSize == null || chunkSize < 1) return;
+        if (delay == null || delay < 0) return;
+        if (call == null) return;
+        var counter = 0;
+        var length = array.length;
+
+        function doChunk() {
+            for (var end = Math.min(array.length, counter + chunkSize); counter < end; counter++) {
+                var ret = call(array[counter], counter, array);
+                if (ret === false) return;
+            }
+            if (counter < array.length) {
+                window.setTimeout(doChunk, delay);
+            } else {
+                if (complete) complete();
+            }
+        }
+        window.setTimeout(doChunk, delay);
+    };
+
+    TBUtils.postToWiki = function(page, subreddit, data, isJSON, updateAM, callback) {
+
+        if (isJSON) {
+            data = JSON.stringify(data, undefined, 2);
+        }
+
+        $.post('/r/' + subreddit + '/api/wiki/edit', {
+            content: data,
+            page: page,
+            reason: 'updated via toolbox config',
+            uh: reddit.modhash
+        })
+
+        .error(function (err) {
+            callback(false, err.responseText);
+        })
+
+        .success(function () {
+            // Callback regardless of what happens next.  We wrote to the page.
+            callback(true);
+
+            if (updateAM) {
+                $.post('/api/compose', {
+                    to: 'automoderator',
+                    uh: reddit.modhash,
+                    subject: subreddit,
+                    text: 'update'
+                })
+                    .success(function () {
+                        alert('sucessfully sent update PM to automoderator');
+                    })
+                    .error(function () {
+                        alert('error sending update PM to automoderator');
+                        window.location = 'http://www.reddit.com/message/compose/?to=AutoModerator&subject=' + subreddit + '&message=update';
+                    });
+            }
+
+            setTimeout(function () {
+
+                // hide the page
+                $.post('/r/' + subreddit + '/wiki/settings/' + page, {
+                    permlevel: 2,
+                    uh: reddit.modhash
+                })
+
+                // Super extra double-secret secure, just to be safe.
+                .error(function (err) {
+                    alert('error setting wiki page to mod only access');
+                    window.location = 'http://www.reddit.com/r/' + subreddit + '/wiki/settings/' + page;
+                });
+
+            }, 500);
+        });
+    };
+
+    TBUtils.readFromWiki = function(subreddit, page, isJSON, callback) {
+
+        $.getJSON('http://www.reddit.com/r/' + subreddit + '/wiki/' + page + '.json', function (json) {
+            var wikiData = json.data.content_md;
+
+            if (!wikiData) {
+                callback(TBUtils.NO_WIKI_PAGE);
+                return;
+            }
+
+            if (isJSON) {
+                wikiData = JSON.parse(wikiData);
+                if (wikiData) {
+                    callback(wikiData);
+                } else {
+                    callback(TBUtils.NO_WIKI_PAGE);
+                }
+                return;
+            }
+
+            // We have valid data, but it's not JSON.
+            callback(wikiData);
+            return;
+
+        }).error(function (e) {
+            var reason = JSON.parse(e.responseText).reason || '';
+            if (reason == 'PAGE_NOT_CREATED' || reason == 'WIKI_DISABLED') {
+                callback(TBUtils.NO_WIKI_PAGE);
+            } else {
+                // we don't know why it failed, we should not try to write to it.
+                callback(TBUtils.WIKI_PAGE_UNKNOWN);
+            }
+        });
+    };
+
+    TBUtils.compressHTML = function(src) {
+        return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
+    };
+    
+    window.onbeforeunload = function () {
+        lastget = new Date().getTime();
+        
+        localStorage['Toolbox.cache.cachename'] = reddit.logged;
+        localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
+        localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
+        localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
+        localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
+        localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+
+    };
+
+}(TBUtils = window.TBUtils || {}));
