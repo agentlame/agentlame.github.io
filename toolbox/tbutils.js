@@ -23,11 +23,11 @@
         TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
     }
     
-    if (localStorage['Toolbox.cache.configcache'] && !newget) {
+    if (localStorage['Toolbox.cache.configcache']) {
         TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache']);
     }
     
-    if (localStorage['Toolbox.cache.notecache'] && !newget) {
+    if (localStorage['Toolbox.cache.notecache']) {
         TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache']);
     }
 
