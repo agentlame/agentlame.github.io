@@ -13,11 +13,11 @@
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
-    TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || {}),
-    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || {}),
+    TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
+    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
     TBUtils.noConfig = [],
     TBUtils.noNotes = [],
-    TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.configcache'] || []);
+    TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
     
     /*
     if (localStorage['Toolbox.cache.moderatedsubs']) {
