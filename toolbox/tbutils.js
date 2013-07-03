@@ -4,6 +4,7 @@
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         lastget = JSON.parse(localStorage['Toolbox.cache.lastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
+        id = Math.floor((Math.random()*100)+1);
         
     // Public variables
     TBUtils.version = 1;
@@ -17,6 +18,8 @@
     TBUtils.noConfig = [],
     TBUtils.noNotes = [],
     TBUtils.mySubs = [];
+    
+    console.log('TBUtils ID: ': id);
 
     TBUtils.usernotes = {
         ver: 1,
