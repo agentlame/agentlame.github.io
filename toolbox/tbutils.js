@@ -75,7 +75,7 @@
                 lastget = new Date().getTime();
                 cachename = reddit.logged;
 
-                TBUtils/mySubs = TBUtils.saneSort(TBUtils.mySubs);
+                TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
 
                 // Update the cache.
                 localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
