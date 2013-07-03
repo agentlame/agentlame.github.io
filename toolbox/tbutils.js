@@ -19,7 +19,7 @@
     TBUtils.noNotes = [],
     TBUtils.mySubs = [];
     
-    console.log('TBUtils ID: ': id);
+    console.log('TBUtils ID: ' + id);
 
     TBUtils.usernotes = {
         ver: 1,
