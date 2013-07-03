@@ -296,11 +296,12 @@
         lastget = new Date().getTime();
         
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
-        localStorage['Toolbox.cache.configcache'] = TBUtils.configCache;
+        localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         console.log(TBUtils.configCache);
-        localStorage['Toolbox.cache.notecache'] = TBUtils.noteCache;
+        localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         console.log(TBUtils.noteCache);
         localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+        localStorage['Toolbox.cache.test'] = JSON.stringify('lastget');
         
         return 'pause';
 
