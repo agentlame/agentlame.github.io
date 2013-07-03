@@ -42,7 +42,7 @@
     
     TBUtils.getID = function(callback) {
         callback(id);
-    }
+    };
 
     //Private functions
     TBUtils.getModSubs = function(callback) {
