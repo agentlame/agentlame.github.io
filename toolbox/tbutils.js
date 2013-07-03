@@ -1,8 +1,7 @@
 (function (TBUtils) { 
     console.log('tbutils loaded 2');
     //Private variables
-    var mySubs = [],
-        modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
+    var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         lastget = JSON.parse(localStorage['Toolbox.cache.lastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
         
@@ -16,7 +15,8 @@
     TBUtils.noteCache = [],
     TBUtils.configCache = [],
     TBUtils.noConfig = [],
-    TBUtils.noNotes = [];
+    TBUtils.noNotes = [],
+    TBUtils.mySubs = [];
 
     TBUtils.usernotes = {
         ver: 1,
@@ -41,18 +41,18 @@
     TBUtils.getModSubs = function(callback) {
 
         if (localStorage['Toolbox.cache.moderatedsubs']) {
-            mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
+            TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
         }
 
         // If it has been more than ten minutes, refresh mod cache.
-        if (mySubs.length < 1 || (new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged) {
-            mySubs = []; //resent list.
+        if (TBUtils.mySubs.length < 1 || (new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged) {
+            TBUtils.mySubs = []; //resent list.
             getSubs(modMineURL);
         } else {
-            mySubs = TBUtils.saneSort(mySubs);
+            TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
 
             // Go!
-            callback(mySubs);
+            callback();
         }
 
         function getSubs(URL) {
@@ -64,7 +64,7 @@
         // Callback because reddits/mod/mine is paginated.
         function getSubsResult(subs, after) {
             $(subs).each(function (sub) {
-                mySubs.push(this.data.display_name.trim());
+                TBUtils.mySubs.push(this.data.display_name.trim());
             });
 
             if (after) {
@@ -75,15 +75,15 @@
                 lastget = new Date().getTime();
                 cachename = reddit.logged;
 
-                mySubs = TBUtils.saneSort(mySubs);
+                TBUtils/mySubs = TBUtils.saneSort(TBUtils.mySubs);
 
                 // Update the cache.
-                localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(mySubs);
+                localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
                 localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
                 localStorage['Toolbox.cache.cachename'] = cachename;
 
                 // Go!
-                callback(mySubs);
+                callback();
             }
         }
 
@@ -145,7 +145,7 @@
         }
 
         // Not a mod, reset current sub.
-        if (modCheck && $.inArray(subreddit, mySubs) === -1) {
+        if (modCheck && $.inArray(subreddit, TBUtils.mySubs) === -1) {
             subreddit = '';
         }
 
