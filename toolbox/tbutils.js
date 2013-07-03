@@ -301,6 +301,8 @@
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         console.log(TBUtils.noteCache);
         localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+        
+        return 'pause';
 
     };
 
