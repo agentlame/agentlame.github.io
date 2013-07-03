@@ -13,8 +13,8 @@
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
-    TBUtils.noteCache = [],
-    TBUtils.configCache = [],
+    TBUtils.noteCache = {},
+    TBUtils.configCache = {},
     TBUtils.noConfig = [],
     TBUtils.noNotes = [],
     TBUtils.mySubs = [];
@@ -296,7 +296,7 @@
         lastget = new Date().getTime();
         
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
-        localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache[0]);
+        localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         console.log(TBUtils.configCache);
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         console.log(TBUtils.noteCache);
