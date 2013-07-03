@@ -1,5 +1,4 @@
 (function (TBUtils) { 
-    console.log('tbutils loaded 2');
     //Private variables
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         lastget = JSON.parse(localStorage['Toolbox.cache.lastget'] || -1),
@@ -18,8 +17,6 @@
     TBUtils.noConfig = [],
     TBUtils.noNotes = [],
     TBUtils.mySubs = [];
-    
-    console.log('TBUtils ID: ' + id);
 
     TBUtils.usernotes = {
         ver: 1,
