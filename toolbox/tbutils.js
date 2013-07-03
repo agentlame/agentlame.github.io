@@ -64,7 +64,9 @@
         // Callback because reddits/mod/mine is paginated.
         function getSubsResult(subs, after) {
             $(subs).each(function (sub) {
-                TBUtils.mySubs.push(this.data.display_name.trim());
+                var sub = this.data.display_name.trim();
+                if ($.inArray(sub, TBUtils.mySubs) === -1)
+                TBUtils.mySubs.push(sub);
             });
 
             if (after) {
