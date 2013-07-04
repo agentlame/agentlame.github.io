@@ -31,7 +31,7 @@
 
     if (getnewlong) {
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
-        TBUtils.configCache.length = 0;
+        TBUtils.configCache.splice(0, TBUtils.configCache.length);
         TBUtils.mySubs.length = 0;
         console.log(TBUtils.configCache);
     }
