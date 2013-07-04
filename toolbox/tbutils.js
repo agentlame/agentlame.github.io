@@ -1,11 +1,13 @@
 (function (TBUtils) { 
     //Private variables
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
-        lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
-        cachename = localStorage['Toolbox.cache.cachename'] || '';
-        id = Math.floor(Math.random()*1000),
-        getnew30 = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged),
-        getnew5 = ((new Date().getTime() - lastget) / (1000 * 60) > 5 || cachename != reddit.logged);
+        now = new Date().getTime(),
+        lastgetlong = JSON.parse(localStorage['Toolbox.cache.lastgetlong'] || -1),
+        lastgetshort = JSON.parse(localStorage['Toolbox.cache.lastgetshort'] || -1),
+        cachename = localStorage['Toolbox.cache.cachename'] || '',
+        id = Math.floor((Math.random()*1000)),
+        getnewlong = ((now - lastgetlong) / (60 * 1000)) > 30),
+        getnewshort = ((now - lastgetshort) / (60 * 1000)) > 5);
         
     // Public variables
     TBUtils.version = 1;
@@ -20,20 +22,27 @@
     TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
     TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
     
-    
-    if (getnew30) {
-        TBUtils.mySubs = [];
-        TBUtils.configCache = {};
-        TBUtils.noteCache = {};
+    // If we're not the same user, get all new caches.
+    if (cachename != reddit.logged) {
+        localStorage['Toolbox.cache.cachename'] = reddit.logged;
+        getnewlong = true;
+        getnewshort = true;
     }
     
-    if (getnew5) {
+    
+    if (getnewlong) {
+        localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
+        TBUtils.configCache = {};
+        TBUtils.mySubs = [];
+    }
+    
+    if (getnewshort) {
+        localStorage['Toolbox.cache.lastgetshort'] = JSON.stringify(now);
+        TBUtils.noteCache = {};
         TBUtils.noConfig = [];
         TBUtils.noNotes = [];
     }
     
-    
-
     TBUtils.usernotes = {
         ver: 1,
         users: [] //typeof userNotes
@@ -61,7 +70,7 @@
     TBUtils.getModSubs = function(callback) {
 
         // If it has been more than ten minutes, refresh mod cache.
-        if (TBUtils.mySubs.length < 1 || (new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged) {
+        if (TBUtils.mySubs.length < 1) {
             TBUtils.mySubs = []; //resent list.
             getSubs(modMineURL);
         } else {
@@ -89,16 +98,10 @@
                 var URL = modMineURL + '&after=' + after;
                 getSubs(URL);
             } else {
-                // We have all our subs.  Start adding ban links.
-                lastget = new Date().getTime();
-                cachename = reddit.logged;
-
                 TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
-
+                
                 // Update the cache.
                 localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
-                //localStorage['Toolbox.cache.subslastget'] = JSON.stringify(lastget);
-                localStorage['Toolbox.cache.cachename'] = cachename;
 
                 // Go!
                 callback();
@@ -352,15 +355,13 @@
     }
     
     window.onbeforeunload = function () {
-        lastget = new Date().getTime();
         
-        //localStorage['Toolbox.cache.cachename'] = reddit.logged;
+        // Cache data.
         localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
         localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
-        //localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
-
+        
     };
 
 }(TBUtils = window.TBUtils || {}));
