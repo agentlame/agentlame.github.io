@@ -33,6 +33,7 @@
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
         TBUtils.configCache.length = 0;
         TBUtils.mySubs.length = 0;
+        console.log(TBUtils.configCache);
     }
 
     if (getnewshort) {
