@@ -359,7 +359,7 @@
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
         localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
-        localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+        //localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
 
     };
 
