@@ -1,14 +1,14 @@
-(function (TBUtils) { 
+(function (TBUtils) {
     //Private variables
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         now = new Date().getTime(),
         lastgetlong = JSON.parse(localStorage['Toolbox.cache.lastgetlong'] || -1),
         lastgetshort = JSON.parse(localStorage['Toolbox.cache.lastgetshort'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
-        id = Math.floor((Math.random()*1000)),
-        getnewlong = ((now - lastgetlong) / (60 * 1000)) > 30),
-        getnewshort = ((now - lastgetshort) / (60 * 1000)) > 5);
-        
+        id = Math.floor((Math.random() * 1000)),
+        getnewlong = ((now - lastgetlong) / (60 * 1000) > 30),
+        getnewshort = ((now - lastgetshort) / (60 * 1000) > 5);
+
     // Public variables
     TBUtils.version = 1;
     TBUtils.NO_WIKI_PAGE = 'NO_WIKI_PAGE';
@@ -21,28 +21,27 @@
     TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
     TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
     TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
-    
+
     // If we're not the same user, get all new caches.
     if (cachename != reddit.logged) {
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
         getnewlong = true;
         getnewshort = true;
     }
-    
-    
+
     if (getnewlong) {
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
         TBUtils.configCache = {};
         TBUtils.mySubs = [];
     }
-    
+
     if (getnewshort) {
         localStorage['Toolbox.cache.lastgetshort'] = JSON.stringify(now);
         TBUtils.noteCache = {};
         TBUtils.noConfig = [];
         TBUtils.noNotes = [];
     }
-    
+
     TBUtils.usernotes = {
         ver: 1,
         users: [] //typeof userNotes
@@ -61,13 +60,13 @@
         removalReasons: '',
         modMacros: '',
     };
-    
-    TBUtils.getID = function(callback) {
+
+    TBUtils.getID = function (callback) {
         callback(id);
     };
 
     //Private functions
-    TBUtils.getModSubs = function(callback) {
+    TBUtils.getModSubs = function (callback) {
 
         // If it has been more than ten minutes, refresh mod cache.
         if (TBUtils.mySubs.length < 1) {
@@ -87,11 +86,12 @@
         }
 
         // Callback because reddits/mod/mine is paginated.
+
         function getSubsResult(subs, after) {
-            $(subs).each(function (sub) {
+            $(subs).each(function () {
                 var sub = this.data.display_name.trim();
                 if ($.inArray(sub, TBUtils.mySubs) === -1)
-                TBUtils.mySubs.push(sub);
+                    TBUtils.mySubs.push(sub);
             });
 
             if (after) {
@@ -99,7 +99,7 @@
                 getSubs(URL);
             } else {
                 TBUtils.mySubs = TBUtils.saneSort(TBUtils.mySubs);
-                
+
                 // Update the cache.
                 localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
 
@@ -107,11 +107,10 @@
                 callback();
             }
         }
-
     };
 
     // Because normal .sort() is case sensitive.
-    TBUtils.saneSort = function(arr) {
+    TBUtils.saneSort = function (arr) {
         return arr.sort(function (a, b) {
             if (a.toLowerCase() < b.toLowerCase()) return -1;
             if (a.toLowerCase() > b.toLowerCase()) return 1;
@@ -119,12 +118,12 @@
         });
     };
 
-    TBUtils.getThingInfo = function(thing, modCheck) {
+    TBUtils.getThingInfo = function (thing, modCheck) {
 
         var user = $(thing).find('.author:first').text(),
             subreddit = $('.titlebox h1.redditname a').text(),
             permalink = $(thing).closest('.entry').find('a.bylink').attr('href');
-            
+
         if (TBUtils.isEditUserPage && !user) {
             user = $(thing).closest('.user').find('a:first').text();
         }
@@ -182,7 +181,7 @@
     };
 
     // Prevent page lock while parsing things.  (stolen from RES)
-    TBUtils.forEachChunked = function(array, chunkSize, delay, call, complete) {
+    TBUtils.forEachChunked = function (array, chunkSize, delay, call, complete) {
         if (array == null) return;
         if (chunkSize == null || chunkSize < 1) return;
         if (delay == null || delay < 0) return;
@@ -204,7 +203,7 @@
         window.setTimeout(doChunk, delay);
     };
 
-    TBUtils.postToWiki = function(page, subreddit, data, isJSON, updateAM, callback) {
+    TBUtils.postToWiki = function (page, subreddit, data, isJSON, updateAM, callback) {
 
         if (isJSON) {
             data = JSON.stringify(data, undefined, 2);
@@ -259,7 +258,7 @@
         });
     };
 
-    TBUtils.readFromWiki = function(subreddit, page, isJSON, callback) {
+    TBUtils.readFromWiki = function (subreddit, page, isJSON, callback) {
 
         $.getJSON('http://www.reddit.com/r/' + subreddit + '/wiki/' + page + '.json', function (json) {
             var wikiData = json.data.content_md;
@@ -294,11 +293,11 @@
         });
     };
 
-    TBUtils.compressHTML = function(src) {
+    TBUtils.compressHTML = function (src) {
         return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
-    
-    TBUtils.getReasosnFromCSS = function(sub, callback) {
+
+    TBUtils.getReasosnFromCSS = function (sub, callback) {
 
         // If not, build a new one, getting the XML from the stylesheet
         $.get('http://www.reddit.com/r/' + sub + '/about/stylesheet.json').success(function (response) {
@@ -306,36 +305,38 @@
                 callback(false);
                 return;
             }
-            
+
             // See if this subreddit is configured for leaving reasons using <removalreasons2>
             var match = response.data.stylesheet.replace(/\n+|\s+/g, ' ')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .match(/<removereasons2>.+<\/removereasons2>/i);
-            
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .match(/<removereasons2>.+<\/removereasons2>/i);
+
             // Try falling back to <removalreasons>
             if (!match) {
                 match = response.data.stylesheet.replace(/\n+|\s+/g, ' ')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .match(/<removereasons>.+<\/removereasons>/i);
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .match(/<removereasons>.+<\/removereasons>/i);
             }
-            
+
             // Neither can be found.    
             if (!match) {
                 callback(false);
                 return;
             }
-            
+
             // Create valid XML from parsed string and convert it to a JSON object.
             var XML = $(match[0]);
             var reasons = [];
-            
-            XML.find('reason').each(function() {
-                var reason = { text: escape(this.innerHTML) };
+
+            XML.find('reason').each(function () {
+                var reason = {
+                    text: escape(this.innerHTML)
+                };
                 reasons.push(reason);
             });
-            
+
             var oldReasons = {
                 pmsubject: XML.find('pmsubject').text() || '',
                 logreason: XML.find('logreason').text() || '',
@@ -347,21 +348,21 @@
                 getfrom: XML.find('getfrom').text() || '',
                 reasons: reasons
             };
-            
+
             callback(oldReasons);
         }).error(function () {
             callback(false);
         });
-    }
-    
+    };
+
     window.onbeforeunload = function () {
-        
+
         // Cache data.
         localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
         localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
-        
+
     };
 
 }(TBUtils = window.TBUtils || {}));
