@@ -6,7 +6,7 @@
         lastgetshort = JSON.parse(localStorage['Toolbox.cache.lastgetshort'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
         id = Math.floor((Math.random() * 1000)),
-        newlogin = (cachename == reddit.logged),
+        newlogin = (cachename != reddit.logged),
         getnewlong = (((now - lastgetlong) / (60 * 1000) > 30) || newlogin),
         getnewshort = (((now - lastgetshort) / (60 * 1000) > 5) || newlogin);
 
