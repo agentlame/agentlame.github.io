@@ -24,10 +24,10 @@
     if (getnew30) {
         TBUtils.mySubs = [];
         TBUtils.configCache = {};
-        TBUtils.noteCache = {};
     }
     
     if (getnew5) {
+        TBUtils.noteCache = {};
         TBUtils.noConfig = [];
         TBUtils.noNotes = [];
     }
