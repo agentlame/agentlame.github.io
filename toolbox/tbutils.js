@@ -295,6 +295,62 @@
         return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
     
+    TBUtils.getReasosnFromCSS = function(sub, callback) {
+
+        // If not, build a new one, getting the XML from the stylesheet
+        $.get('http://www.reddit.com/r/' + sub + '/about/stylesheet.json').success(function (response) {
+            if (!response.data) {
+                callback(false);
+                return;
+            }
+            
+            // See if this subreddit is configured for leaving reasons using <removalreasons2>
+            var match = response.data.stylesheet.replace(/\n+|\s+/g, ' ')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .match(/<removereasons2>.+<\/removereasons2>/i);
+            
+            // Try falling back to <removalreasons>
+            if (!match) {
+                match = response.data.stylesheet.replace(/\n+|\s+/g, ' ')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .match(/<removereasons>.+<\/removereasons>/i);
+            }
+            
+            // Neither can be found.    
+            if (!match) {
+                callback(false);
+                return;
+            }
+            
+            // Create valid XML from parsed string and convert it to a JSON object.
+            var XML = $(match[0]);
+            var reasons = [];
+            
+            XML.find('reason').each(function() {
+                var reason = { text: escape(this.innerHTML) };
+                reasons.push(reason);
+            });
+            
+            var oldReasons = {
+                pmsubject: XML.find('pmsubject').text() || '',
+                logreason: XML.find('logreason').text() || '',
+                header: escape(XML.find('header').text() || ''),
+                footer: escape(XML.find('footer').text() || ''),
+                logsub: XML.find('logsub').text() || '',
+                logtitle: XML.find('logtitle').text() || '',
+                bantitle: XML.find('bantitle').text() || '',
+                getfrom: XML.find('getfrom').text() || '',
+                reasons: reasons
+            };
+            
+            callback(oldReasons);
+        }).error(function () {
+            callback(false);
+        });
+    }
+    
     window.onbeforeunload = function () {
         lastget = new Date().getTime();
         
