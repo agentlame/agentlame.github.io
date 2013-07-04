@@ -6,8 +6,8 @@
         lastgetshort = JSON.parse(localStorage['Toolbox.cache.lastgetshort'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
         id = Math.floor((Math.random() * 1000)),
-        getnewlong = ((now - lastgetlong) / (60 * 1000) > 30),
-        getnewshort = ((now - lastgetshort) / (60 * 1000) > 5);
+        getnewlong = (((now - lastgetlong) / (60 * 1000) > 30) || cachename != reddit.logged),
+        getnewshort = (((now - lastgetshort) / (60 * 1000) > 5) || cachename != reddit.logged);
 
     // Public variables
     TBUtils.version = 1;
@@ -16,19 +16,18 @@
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
-    TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
-    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
-    TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
-    TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
-    TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
+    TBUtils.noteCache = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}') : {},
+    TBUtils.configCache = (getnewlong) ? JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}') : {},
+    TBUtils.noConfig = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]') : [],
+    TBUtils.noNotes = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]') : [],
+    TBUtils.mySubs = (getnewlong) ? JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]') : [];
 
     // If we're not the same user, get all new caches.
     if (cachename != reddit.logged) {
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
-        getnewlong = true;
-        getnewshort = true;
     }
 
+/*
     if (getnewlong) {
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
         TBUtils.configCache.splice(0, TBUtils.configCache.length);
@@ -42,6 +41,7 @@
         TBUtils.noConfig.length = 0;
         TBUtils.noNotes.length = 0;
     }
+    */
 
     TBUtils.usernotes = {
         ver: 1,
