@@ -4,7 +4,8 @@
         lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
         id = Math.floor((Math.random()*100)+1);
-        newget = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged);
+        getnew30 = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged),
+        getnew5 = ((new Date().getTime() - lastget) / (1000 * 60) > 5 || cachename != reddit.logged);
         
     // Public variables
     TBUtils.version = 1;
@@ -14,24 +15,23 @@
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
     TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
-    TBUtils.configCache = {},//JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
+    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
     TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
     TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
     TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
     
-    /*
-    if (localStorage['Toolbox.cache.moderatedsubs']) {
-        TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs']);
+    
+    if (getnew30) {
+        TBUtils.mySubs = [];
+        TBUtils.configCache = {};
+        TBUtils.noteCache = {};
     }
     
-    if (localStorage['Toolbox.cache.configcache']) {
-        TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache']);
+    if (getnew5) {
+        TBUtils.noConfig = [];
+        TBUtils.noNotes = [];
     }
     
-    if (localStorage['Toolbox.cache.notecache']) {
-        TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache']);
-    }
-    */
     
 
     TBUtils.usernotes = {
@@ -354,7 +354,7 @@
     window.onbeforeunload = function () {
         lastget = new Date().getTime();
         
-        localStorage['Toolbox.cache.cachename'] = reddit.logged;
+        //localStorage['Toolbox.cache.cachename'] = reddit.logged;
         localStorage['Toolbox.cache.configcache'] = JSON.stringify(TBUtils.configCache);
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
