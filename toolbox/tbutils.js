@@ -6,8 +6,9 @@
         lastgetshort = JSON.parse(localStorage['Toolbox.cache.lastgetshort'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
         id = Math.floor((Math.random() * 1000)),
-        getnewlong = (((now - lastgetlong) / (60 * 1000) > 30) || cachename != reddit.logged),
-        getnewshort = (((now - lastgetshort) / (60 * 1000) > 5) || cachename != reddit.logged);
+        newlogin = (cachename == reddit.logged)
+        getnewlong = (((now - lastgetlong) / (60 * 1000) > 30) || newlogin),
+        getnewshort = (((now - lastgetshort) / (60 * 1000) > 5) || newlogin);
 
     // Public variables
     TBUtils.version = 1;
@@ -16,14 +17,14 @@
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
-    TBUtils.noteCache = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}') : {},
-    TBUtils.configCache = (getnewlong) ? JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}') : {},
-    TBUtils.noConfig = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]') : [],
-    TBUtils.noNotes = (getnewshort) ? JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]') : [],
-    TBUtils.mySubs = (getnewlong) ? JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]') : [];
+    TBUtils.noteCache = (getnewshort) ? {} : JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
+    TBUtils.configCache = (getnewlong) ? {} : JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
+    TBUtils.noConfig = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
+    TBUtils.noNotes = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
+    TBUtils.mySubs = (getnewlong) ? [] : JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
 
     // If we're not the same user, get all new caches.
-    if (cachename != reddit.logged) {
+    if (newlogin) {
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
     }
 
