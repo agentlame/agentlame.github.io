@@ -31,15 +31,15 @@
 
     if (getnewlong) {
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
-        TBUtils.configCache = {};
-        TBUtils.mySubs = [];
+        TBUtils.configCache.length = 0;
+        TBUtils.mySubs.length = 0;
     }
 
     if (getnewshort) {
         localStorage['Toolbox.cache.lastgetshort'] = JSON.stringify(now);
-        TBUtils.noteCache = {};
-        TBUtils.noConfig = [];
-        TBUtils.noNotes = [];
+        TBUtils.noteCache.length = 0;
+        TBUtils.noConfig.length = 0;
+        TBUtils.noNotes.length = 0;
     }
 
     TBUtils.usernotes = {
