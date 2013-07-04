@@ -23,26 +23,18 @@
     TBUtils.noNotes = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
     TBUtils.mySubs = (getnewlong) ? [] : JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
 
-    // If we're not the same user, get all new caches.
+    // Update cache vars as needed.
     if (newlogin) {
         localStorage['Toolbox.cache.cachename'] = reddit.logged;
     }
-
-/*
+    
     if (getnewlong) {
         localStorage['Toolbox.cache.lastgetlong'] = JSON.stringify(now);
-        TBUtils.configCache.splice(0, TBUtils.configCache.length);
-        TBUtils.mySubs.length = 0;
-        console.log(TBUtils.configCache);
     }
 
     if (getnewshort) {
         localStorage['Toolbox.cache.lastgetshort'] = JSON.stringify(now);
-        TBUtils.noteCache.length = 0;
-        TBUtils.noConfig.length = 0;
-        TBUtils.noNotes.length = 0;
     }
-    */
 
     TBUtils.usernotes = {
         ver: 1,
