@@ -3,7 +3,7 @@
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
-        id = Math.floor((Math.random()*100)+1),
+        id = Math.floor(Math.random()*1000),
         getnew30 = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged),
         getnew5 = ((new Date().getTime() - lastget) / (1000 * 60) > 5 || cachename != reddit.logged);
         
@@ -97,7 +97,7 @@
 
                 // Update the cache.
                 localStorage['Toolbox.cache.moderatedsubs'] = JSON.stringify(TBUtils.mySubs);
-                localStorage['Toolbox.cache.subslastget'] = JSON.stringify(lastget);
+                //localStorage['Toolbox.cache.subslastget'] = JSON.stringify(lastget);
                 localStorage['Toolbox.cache.cachename'] = cachename;
 
                 // Go!
@@ -359,7 +359,7 @@
         localStorage['Toolbox.cache.notecache'] = JSON.stringify(TBUtils.noteCache);
         localStorage['Toolbox.cache.noconfig'] = JSON.stringify(TBUtils.noConfig);
         localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
-        localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
+        //localStorage['Toolbox.cache.lastget'] = JSON.stringify(lastget);
 
     };
 
