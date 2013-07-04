@@ -3,7 +3,7 @@
     var modMineURL = 'http://www.reddit.com/subreddits/mine/moderator.json?count=100',
         lastget = JSON.parse(localStorage['Toolbox.cache.subslastget'] || -1),
         cachename = localStorage['Toolbox.cache.cachename'] || '';
-        id = Math.floor((Math.random()*100)+1);
+        id = Math.floor((Math.random()*100)+1),
         getnew30 = ((new Date().getTime() - lastget) / (1000 * 60) > 30 || cachename != reddit.logged),
         getnew5 = ((new Date().getTime() - lastget) / (1000 * 60) > 5 || cachename != reddit.logged);
         
