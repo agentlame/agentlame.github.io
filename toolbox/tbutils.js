@@ -14,7 +14,7 @@
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
     TBUtils.noteCache = JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
-    TBUtils.configCache = JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
+    TBUtils.configCache = {},//JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
     TBUtils.noConfig = JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
     TBUtils.noNotes = JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
     TBUtils.mySubs = JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
