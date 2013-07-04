@@ -277,7 +277,7 @@
             }
 
             // We have valid data, but it's not JSON.
-            callback(wikiData);
+            callback(TBUtils.compressHTML(wikiData));
             return;
 
         }).error(function (e) {
