@@ -317,7 +317,7 @@
         }
         
         if (!permalink) {
-            permalink $(thing).closest('.entry').find('.buttons:first .first a').attr('href')
+            permalink = $(thing).closest('.entry').find('.buttons:first .first a').attr('href')
         }
 
         if (!subreddit) {
