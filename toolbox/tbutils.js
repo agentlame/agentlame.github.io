@@ -489,8 +489,6 @@
                 .replace(/&lt;/g, '<')
                 .replace(/&gt;/g, '>')
                 .match(/<removereasons2>.+<\/removereasons2>/i);
-                
-                console.log(match);
 
             // Try falling back to <removalreasons>
             if (!match) {
@@ -499,7 +497,6 @@
                     .replace(/&gt;/g, '>')
                     .match(/<removereasons>.+<\/removereasons>/i);
             }
-            console.log(match);
 
             // Neither can be found.    
             if (!match) {
