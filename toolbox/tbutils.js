@@ -299,9 +299,9 @@
     TBUtils.getThingInfo = function (thing, modCheck) {
 
         var user = $(thing).find('.author:first').text(),
-            subreddit = $('.titlebox h1.redditname a').text(),
+            subreddit = reddit.post_site || $('.titlebox h1.redditname a').text(),
             permalink = $(thing).closest('.entry').find('a.bylink').attr('href'),
-            domain = thing.find('span.domain:first').text().replace('(', '').replace(')', '');
+            domain = $(thing).find('span.domain:first').text().replace('(', '').replace(')', '');
 
         if (TBUtils.isEditUserPage && !user) {
             user = $(thing).closest('.user').find('a:first').text();
