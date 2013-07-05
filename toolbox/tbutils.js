@@ -315,6 +315,10 @@
         if (!permalink) {
             permalink = $(thing).closest('.entry').find('a.comments').attr('href');
         }
+        
+        if (!permalink) {
+            permalink $(thing).closest('.entry').find('.buttons:first .first a').attr('href')
+        }
 
         if (!subreddit) {
             subreddit = $(thing).closest('.entry').find('.subreddit').text();
