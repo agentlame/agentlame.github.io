@@ -317,7 +317,7 @@
         }
         
         if (!permalink) {
-            permalink = $(thing).closest('.entry').find('.buttons:first .first a').attr('href')
+            permalink = $(thing).find('.buttons:first .first a').attr('href');
         }
 
         if (!subreddit) {
@@ -326,6 +326,10 @@
 
         if (!subreddit) {
             subreddit = $(thing).closest('.thing').find('.subreddit').text();
+        }
+        
+        if (!subreddit) {
+            subreddit = $(thing).children('.thing').find('.subreddit').text();
         }
 
         // If we still don't have a sub, we're in mod mail
