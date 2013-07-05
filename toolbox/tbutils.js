@@ -300,7 +300,8 @@
 
         var user = $(thing).find('.author:first').text(),
             subreddit = $('.titlebox h1.redditname a').text(),
-            permalink = $(thing).closest('.entry').find('a.bylink').attr('href');
+            permalink = $(thing).closest('.entry').find('a.bylink').attr('href'),
+            domain = thing.find('span.domain:first').text().replace('(', '').replace(')', '');
 
         if (TBUtils.isEditUserPage && !user) {
             user = $(thing).closest('.user').find('a:first').text();
@@ -362,7 +363,8 @@
         return {
             subreddit: subreddit,
             user: user,
-            permalink: permalink
+            permalink: permalink,
+            domain: domain
         };
     };
 
