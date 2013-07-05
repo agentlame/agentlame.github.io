@@ -17,12 +17,12 @@
     TBUtils.NO_WIKI_PAGE = 'NO_WIKI_PAGE';
     TBUtils.WIKI_PAGE_UNKNOWN = 'WIKI_PAGE_UNKNOWN';
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
-    TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/),
-    TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/),
-    TBUtils.noteCache = (getnewshort) ? {} : JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}'),
-    TBUtils.configCache = (getnewlong) ? {} : JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}'),
-    TBUtils.noConfig = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]'),
-    TBUtils.noNotes = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]'),
+    TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/);
+    TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/);
+    TBUtils.noteCache = (getnewshort) ? {} : JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}');
+    TBUtils.configCache = (getnewlong) ? {} : JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}');
+    TBUtils.noConfig = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]');
+    TBUtils.noNotes = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.nonotes'] || '[]');
     TBUtils.mySubs = (getnewlong) ? [] : JSON.parse(localStorage['Toolbox.cache.moderatedsubs'] || '[]');
 
     // Update cache vars as needed.
