@@ -471,7 +471,11 @@
             return;
 
         }).error(function (e) {
-            console.log(e);
+            if (!e.responseText) {
+                callback(TBUtils.WIKI_PAGE_UNKNOWN);
+                return;
+            }
+            
             var reason = JSON.parse(e.responseText).reason || '';
             if (reason == 'PAGE_NOT_CREATED' || reason == 'WIKI_DISABLED') {
                 callback(TBUtils.NO_WIKI_PAGE);
