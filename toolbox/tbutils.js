@@ -7,7 +7,7 @@
         shortlength = JSON.parse(localStorage['Toolbox.cache.shortlength'] || 15),
         longlength = JSON.parse(localStorage['Toolbox.cache.longlength'] || 45),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
-        id = Math.floor((Math.random() * 1000)),
+        id = Math.floor(Math.random() * 9999),
         newlogin = (cachename != reddit.logged),
         getnewlong = (((now - lastgetlong) / (60 * 1000) > longlength) || newlogin),
         getnewshort = (((now - lastgetshort) / (60 * 1000) > shortlength) || newlogin);
@@ -19,6 +19,9 @@
     TBUtils.isModmail = location.pathname.match(/\/message\/(?:moderator)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/);
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/);
+    TBUtils.isExtension = (typeof chrome !== "undefined" && chrome.extension);
+    
+    // Cache vars.
     TBUtils.noteCache = (getnewshort) ? {} : JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}');
     TBUtils.configCache = (getnewlong) ? {} : JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}');
     TBUtils.noConfig = (getnewshort) ? [] : JSON.parse(localStorage['Toolbox.cache.noconfig'] || '[]');
@@ -59,6 +62,20 @@
 
     TBUtils.getID = function (callback) {
         callback(id);
+    };
+    
+    TBUtils.setting = function (module, setting, defaultVal, value) {
+        var storageKey = 'Toolbox.'+ module +'.'+ setting;
+        
+        if (value !== undefined) {
+            localStorage[storageKey] = JSON.stringify(value);
+        }
+        
+        var keyval = localStorage[storageKey];
+        
+        if (keyval === undefined) return defaultVal;
+        
+        return JSON.parse(keyval);
     };
     
     TBUtils.notification = function (title, body, url) {
@@ -243,7 +260,7 @@
             }
         }
 
-    }
+    };
 
     TBUtils.getModSubs = function (callback) {
 
