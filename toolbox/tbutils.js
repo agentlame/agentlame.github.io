@@ -471,6 +471,7 @@
             return;
 
         }).error(function (e) {
+            console.log(e);
             var reason = JSON.parse(e.responseText).reason || '';
             if (reason == 'PAGE_NOT_CREATED' || reason == 'WIKI_DISABLED') {
                 callback(TBUtils.NO_WIKI_PAGE);
