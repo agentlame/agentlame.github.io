@@ -314,50 +314,29 @@
     };
 
     TBUtils.getThingInfo = function (thing, modCheck) {
+        var entry = $(thing).closest('.entry') || thing;
+        
+        if (!$(thing).hasClass('thing')) {
+            thing = $(thing).closest('.thing') || thing;
+        }
 
-        var user = $(thing).find('.author:first').text(),
-            subreddit = reddit.post_site || $('.titlebox h1.redditname a').text(),
-            permalink = $(thing).closest('.entry').find('a.bylink').attr('href'),
-            domain = $(thing).find('span.domain:first').text().replace('(', '').replace(')', '');
+        var user = $(entry).find('.author:first').text() || $(thing).find('.author:first').text();
+            subreddit = reddit.post_site|| $(entry).find('.subreddit').text() || $(thing).find('.subreddit').text();
+            permalink = $(entry).find('a.bylink').attr('href') || $(entry).find('.buttons:first .first a').attr('href') || $(thing).find('a.bylink').attr('href') || $(thing).find('.buttons:first .first a').attr('href');
+            domain = ($(entry).find('span.domain:first').text() || $(thing).find('span.domain:first').text()).replace('(', '').replace(')', '');
 
         if (TBUtils.isEditUserPage && !user) {
-            user = $(thing).closest('.user').find('a:first').text();
-        }
-
-        // Try again.
-        if (!user) {
-            user = $(thing).closest('.entry').find('.author:first').text();
-        }
-
-        // Might be a submission.
-        if (!permalink) {
-            permalink = $(thing).closest('.entry').find('a.comments').attr('href');
+            user = $(entry).closest('.user').find('a:first').text() || $(thing).closest('.user').find('a:first').text();
         }
         
-        if (!permalink) {
-            permalink = $(thing).find('.buttons:first .first a').attr('href');
-        }
-
+        // If we still don't have a sub, we're in mod mail, or PMs.
         if (!subreddit) {
-            subreddit = $(thing).closest('.entry').find('.subreddit').text();
-        }
-
-        if (!subreddit) {
-            subreddit = $(thing).closest('.thing').find('.subreddit').text();
-        }
-        
-        if (!subreddit) {
-            subreddit = $(thing).children('.thing').find('.subreddit').text();
-        }
-
-        // If we still don't have a sub, we're in mod mail
-        if (!subreddit) {
-            subreddit = $(thing).find('.head a:last').text().replace('/r/', '').replace('/', '').trim();
-
+            subreddit = ($(entry).find('.head a:last').text() || $(thing).find('.head a:last').text()).replace('/r/', '').replace('/', '').trim();
+            
             //user: there is still a chance that this is mod mail, but we're us.
             //This is a weird palce to go about this, and the conditions are strange,
             //but if we're going to assume we're us, we better make damned well sure that is likely the case.
-            if (!user && $(thing).find('.remove-button').text() === '') {
+            if (!user && ($(entry).find('.remove-button') || $(thing).find('.remove-button')).text() === '') {
                 user = reddit.logged;
 
                 if (!subreddit) {
