@@ -78,7 +78,8 @@
         return JSON.parse(keyval);
     };
     
-    TBUtils.notification = function (title, body, url) {
+    TBUtils.notification = function (title, body, url, timeout) {
+        if (timeout === undefined) timeout = 15000;
 
         var toolboxnotificationenabled = true;
         // check if notifications are enabled. When they are not we simply abort the function. 
@@ -103,7 +104,7 @@
             var settings = {
                 'speed': 'fast', // animations: fast, slow, or integer
                 'duplicates': true, // true or false
-                'autoclose': 15000 // integer or false
+                'autoclose': timeout // integer or false
             };
 
             // Passing in the object instead of specifying a note
@@ -206,7 +207,7 @@
                         body: body,
                         icon: "http://creesch.github.io/reddit-declutter/reddit-icon.png",
                         onshow: function () {
-                            setTimeout(notification.close(), 15000);
+                            if (timeout) setTimeout(notification.close(), timeout);
                         },
                         onclick: function () {
                             // Open the page
@@ -230,9 +231,11 @@
 
                 // Auto-hide after a while
                 toolboxnotification.ondisplay = function (event) {
-                    setTimeout(function () {
-                        event.currentTarget.cancel();
-                    }, 10000);
+                    if (timeout) {
+                        setTimeout(function () {
+                            event.currentTarget.cancel();
+                        }, timeout);
+                    }
                 };
 
                 // Define what happens when the notification is clicked. 
@@ -320,9 +323,9 @@
             thing = $(thing).closest('.thing') || thing;
         }
 
-        var user = $(entry).find('.author:first').text() || $(thing).find('.author:first').text();
-            subreddit = reddit.post_site|| $(entry).find('.subreddit').text() || $(thing).find('.subreddit').text();
-            permalink = $(entry).find('a.bylink').attr('href') || $(entry).find('.buttons:first .first a').attr('href') || $(thing).find('a.bylink').attr('href') || $(thing).find('.buttons:first .first a').attr('href');
+        var user = $(entry).find('.author:first').text() || $(thing).find('.author:first').text(),
+            subreddit = reddit.post_site|| $(entry).find('.subreddit').text() || $(thing).find('.subreddit').text(),
+            permalink = $(entry).find('a.bylink').attr('href') || $(entry).find('.buttons:first .first a').attr('href') || $(thing).find('a.bylink').attr('href') || $(thing).find('.buttons:first .first a').attr('href'),
             domain = ($(entry).find('span.domain:first').text() || $(thing).find('span.domain:first').text()).replace('(', '').replace(')', '');
 
         if (TBUtils.isEditUserPage && !user) {
@@ -366,12 +369,12 @@
 
     // Prevent page lock while parsing things.  (stolen from RES)
     TBUtils.forEachChunked = function (array, chunkSize, delay, call, complete) {
-        if (array == null) return;
-        if (chunkSize == null || chunkSize < 1) return;
-        if (delay == null || delay < 0) return;
-        if (call == null) return;
+        if (array === null) return;
+        if (chunkSize === null || chunkSize < 1) return;
+        if (delay === null || delay < 0) return;
+        if (call === null) return;
         var counter = 0;
-        var length = array.length;
+        //var length = array.length;
 
         function doChunk() {
             for (var end = Math.min(array.length, counter + chunkSize); counter < end; counter++) {
@@ -481,10 +484,25 @@
             }
         });
     };
-
+    
+    // Needs to be replaced. 
     TBUtils.compressHTML = function (src) {
-        return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
+        console.log('TBUtils.compressHTML() is deprcated.  Use TBUtils.htmlDecode()');
+        return TBUtils.htmlDecode(src);
+        //return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
+    
+    // easy way to simulate the php html encode and decode functions
+    TBUtils.htmlEncode = function(value) {
+        //create a in-memory div, set it's inner text(which jQuery automatically encodes)
+        //then grab the encoded contents back out.  The div never exists on the page.
+        return $('<div/>').text(value).html();
+    };
+    
+    TBUtils.htmlDecode = function(value) {
+        return $('<div/>').html(value).text();
+    };
+    
 
     TBUtils.getReasosnFromCSS = function (sub, callback) {
 
