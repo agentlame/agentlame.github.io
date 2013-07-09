@@ -1,8 +1,8 @@
 (function() {
   var note = {
-      text: 'This is a sample ToolBox notification.  Click on it to see how it is done.',
-      link: 'https://github.com/agentlame/agentlame.github.io/edit/master/toolbox/tbnote.js',
-      id: 1001
+      text: 'Be sure to check-out the new Toolbox Chrome extension.  Click anywhere to continue.',
+      link: 'http://www.reddit.com/r/toolbox/comments/1hplt9/beta_moderator_toolbox_extension/',
+      id: 1000
   };
   if (TBUtils) {
       TBUtils.showNote(note);
