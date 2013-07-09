@@ -1,9 +1,9 @@
 (function() {
   var note = {
-      text: 'testText',
-      link: 'https://github.com/agentlame/agentlame.github.io/new/master/toolbox',
+      text: 'This is a sample ToolBox notification.  Click on it to see how it is done.',
+      link: 'https://github.com/agentlame/agentlame.github.io/edit/master/toolbox/tbnote.js',
       id: 1000
-  }
+  };
   if (TBUtils) {
       TBUtils.showNote(note);
   }
