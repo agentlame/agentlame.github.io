@@ -8,7 +8,7 @@
         longlength = JSON.parse(localStorage['Toolbox.cache.longlength'] || 45),
         cachename = localStorage['Toolbox.cache.cachename'] || '',
         seennotes = JSON.parse(localStorage['Toolbox.Utils.seennotes'] || '[]'),
-        notelastshown = JSON.parse(localStorage['Toolbox.Utils.notelastshown'] || -1),
+        //notelastshown = JSON.parse(localStorage['Toolbox.Utils.notelastshown'] || -1), //TODO: add
         id = Math.floor(Math.random() * 9999),
         newlogin = (cachename != reddit.logged),
         getnewlong = (((now - lastgetlong) / (60 * 1000) > longlength) || newlogin),
@@ -22,8 +22,9 @@
     TBUtils.isModmailUnread = location.pathname.match(/\/message\/(?:moderator\/unread)\/?/);
     TBUtils.isModpage = location.pathname.match(/\/about\/(?:reports|modqueue|spam|unmoderated|trials)\/?/);
     TBUtils.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/);
-    TBUtils.isExtension = (typeof chrome !== "undefined" && chrome.extension);
-    
+    //TBUtils.isExtension = (typeof chrome !== "undefined" && chrome.extension), //TODO: fix
+    TBUtils.log = '';
+
     // Cache vars.
     TBUtils.noteCache = (getnewshort) ? {} : JSON.parse(localStorage['Toolbox.cache.notecache'] || '{}');
     TBUtils.configCache = (getnewlong) ? {} : JSON.parse(localStorage['Toolbox.cache.configcache'] || '{}');
@@ -43,9 +44,9 @@
     if (getnewshort) {
         localStorage['Toolbox.cache.lastgetshort'] = JSON.stringify(now);
     }
-    
+
     TBUtils.usernotes = {
-        ver: 1,
+        ver: 2,
         users: [] //typeof userNotes
     };
 
@@ -53,8 +54,11 @@
         note: '',
         time: '',
         mod: '',
-        link: ''
+        link: '',
+        type: ''
     };
+
+    TBUtils.warningType = ['spamwatch', 'spamwarn', 'abusewarn', 'ban', 'permban', 'botban'];
 
     TBUtils.config = {
         ver: 1,
@@ -66,42 +70,75 @@
     TBUtils.getID = function (callback) {
         callback(id);
     };
-    
+
     TBUtils.setting = function (module, setting, defaultVal, value) {
-        var storageKey = 'Toolbox.'+ module +'.'+ setting;
-        
+        var storageKey = 'Toolbox.' + module + '.' + setting;
+
         if (value !== undefined) {
             localStorage[storageKey] = JSON.stringify(value);
         }
-        
+
         var keyval = localStorage[storageKey];
-        
+
         if (keyval === undefined) return defaultVal;
-        
+
         return JSON.parse(keyval);
     };
-    
-    TBUtils.alert = function(message, callback){
-        $('<div id="tb-notification-alert">'+ message +'</div>').appendTo('body').click(function () {
+
+    TBUtils.getTypeInfo = function (warningType) {
+        var typeInfo = {
+            name: '',
+            color: '',
+            text: ''
+        };
+
+        switch (String(warningType)) { //not sure why it gets passed as an array.
+        case 'spamwatch':
+            typeInfo = { color: 'fuchsia', name: 'Watching', text: 'Spam Watch' };
+            break;
+        case 'spamwarn':
+            typeInfo = { color: 'purple', name: 'Warned', text: 'Spam Warning' };
+            break;
+        case 'abusewarn':
+            typeInfo = { color: 'orange', name: 'Warned', text: 'Abuse Warning' };
+            break;
+        case 'ban':
+            typeInfo = { color: 'red', name: 'Banned', text: 'Ban' };
+            break;
+        case 'permban':
+            typeInfo = { color: 'darkred', name: 'Perma-banned', text: 'Permanent Ban' };
+            break;
+        case 'botban':
+            typeInfo = { color: 'black', name: 'Bot Banned', text: 'Shadow Ban' };
+            break;
+        default:
+            typeInfo = { color: '', name: '', text: 'none' };
+        }
+
+        return typeInfo;
+    };
+
+    TBUtils.alert = function (message, callback) {
+        $('<div id="tb-notification-alert">' + message + '</div>').appendTo('body').click(function () {
             $(this).remove();
             callback();
         });
     };
-    
-    TBUtils.showNote = function(note) {
+
+    TBUtils.showNote = function (note) {
         if (!note.id || !note.text) return;
-        
+
         if ($.inArray(note.id, seennotes) === -1) {
             TBUtils.setting('Utils', 'notelastshown', '', now);
-            
-            TBUtils.alert(TBUtils.htmlDecode(note.text), function(){
+
+            TBUtils.alert(TBUtils.htmlDecode(note.text), function () {
                 seennotes.push(note.id);
                 TBUtils.setting('Utils', 'seennotes', '', seennotes);
                 if (note.link) window.open(note.link);
             });
         }
     };
-    
+
     TBUtils.notification = function (title, body, url, timeout) {
         if (timeout === undefined) timeout = 15000;
 
@@ -231,7 +268,7 @@
                         body: body,
                         icon: "http://creesch.github.io/reddit-declutter/reddit-icon.png",
                         onshow: function () {
-                            if (timeout) setTimeout(notification.close(), timeout);
+                            if (timeout) setTimeout(this.close(), timeout);
                         },
                         onclick: function () {
                             // Open the page
@@ -309,6 +346,7 @@
         }
 
         // Callback because reddits/mod/mine is paginated.
+
         function getSubsResult(subs, after) {
             $(subs).each(function () {
                 var sub = this.data.display_name.trim();
@@ -343,24 +381,20 @@
     TBUtils.getThingInfo = function (sender, modCheck) {
         var entry = $(sender).closest('.entry') || sender;
         var thing = $(sender).closest('.thing') || sender;
-        
-        if (!$(thing).hasClass('thing')) {
-            
-        }
 
         var user = $(entry).find('.author:first').text() || $(thing).find('.author:first').text(),
-            subreddit = reddit.post_site|| $(entry).find('.subreddit').text() || $(thing).find('.subreddit').text(),
+            subreddit = reddit.post_site || $(entry).find('.subreddit').text() || $(thing).find('.subreddit').text(),
             permalink = $(entry).find('a.bylink').attr('href') || $(entry).find('.buttons:first .first a').attr('href') || $(thing).find('a.bylink').attr('href') || $(thing).find('.buttons:first .first a').attr('href'),
             domain = ($(entry).find('span.domain:first').text() || $(thing).find('span.domain:first').text()).replace('(', '').replace(')', '');
 
         if (TBUtils.isEditUserPage && !user) {
             user = $(sender).closest('.user').find('a:first').text() || $(entry).closest('.user').find('a:first').text() || $(thing).closest('.user').find('a:first').text();
         }
-        
+
         // If we still don't have a sub, we're in mod mail, or PMs.
         if (!subreddit) {
             subreddit = ($(entry).find('.head a:last').text() || $(thing).find('.head a:last').text()).replace('/r/', '').replace('/', '').trim();
-            
+
             //user: there is still a chance that this is mod mail, but we're us.
             //This is a weird palce to go about this, and the conditions are strange,
             //but if we're going to assume we're us, we better make damned well sure that is likely the case.
@@ -499,7 +533,7 @@
                 callback(TBUtils.WIKI_PAGE_UNKNOWN);
                 return;
             }
-            
+
             var reason = JSON.parse(e.responseText).reason || '';
             if (reason == 'PAGE_NOT_CREATED' || reason == 'WIKI_DISABLED') {
                 callback(TBUtils.NO_WIKI_PAGE);
@@ -509,25 +543,24 @@
             }
         });
     };
-    
+
     // Needs to be replaced. 
     TBUtils.compressHTML = function (src) {
         console.log('TBUtils.compressHTML() is deprcated.  Use TBUtils.htmlDecode()');
         return TBUtils.htmlDecode(src);
         //return src.replace(/(\n+|\s+)?&lt;/g, '<').replace(/&gt;(\n+|\s+)?/g, '>').replace(/&amp;/g, '&').replace(/\n/g, '').replace(/child" >  False/, 'child">');
     };
-    
+
     // easy way to simulate the php html encode and decode functions
-    TBUtils.htmlEncode = function(value) {
+    TBUtils.htmlEncode = function (value) {
         //create a in-memory div, set it's inner text(which jQuery automatically encodes)
         //then grab the encoded contents back out.  The div never exists on the page.
         return $('<div/>').text(value).html();
     };
-    
-    TBUtils.htmlDecode = function(value) {
+
+    TBUtils.htmlDecode = function (value) {
         return $('<div/>').html(value).text();
     };
-    
 
     TBUtils.getReasosnFromCSS = function (sub, callback) {
 
@@ -596,12 +629,49 @@
         localStorage['Toolbox.cache.nonotes'] = JSON.stringify(TBUtils.noNotes);
 
     };
-    
+
+    (function ($) {
+        $.fn.log = function (message, skip) {
+            if (TBUtils.log !== undefined) {
+                TBUtils.log += message + '\n';
+            } else {
+                console.log('TB: ' + message);
+            }
+        }
+        $.log = function (message, skip) {
+            if (!TBUtils.setting('Utils', 'debugMode', false)) return;
+
+            if (skip) {
+                console.log('TB [' + arguments.callee.caller.name + ']: ' + message);
+                return;
+            }
+            if (typeof message === 'object') {
+                if (message instanceof jQuery) {
+                    message = 'jQuery object:\n' + $('<div>').append($(message).clone()).html();
+                } else {
+                    try {
+                        message = 'Object:\n' + JSON.stringify(message);
+                    } catch (e) {
+                        console.log('TB Console could not convert: ');
+                        console.log(message);
+                        message = String(message) + ' (error converting object see broswer console)\nError Message: ' + e.message;
+                    }
+                }
+            }
+
+            var lines = String(TBUtils.log.split('\n').length);
+            if (lines.length === 1) lines = '0' + lines;
+            if (lines.length === 2) lines = '0' + lines;
+            var msg = lines + ' [' + arguments.callee.caller.name + ']: ' + message;
+            return $.fn.log(msg);
+        };
+    })(jQuery);
+
     // get toolbox news
     (function getNotes() {
-        TBUtils.readFromWiki('toolbox', 'tbnotes', true, function(resp) {
-            if (!resp || resp === TBUtils.WIKI_PAGE_UNKNOWN || resp === TBUtils.NO_WIKI_PAGE || resp.length < 1)  return;
-            $(resp.notes).each(function(){
+        TBUtils.readFromWiki('toolbox', 'tbnotes', true, function (resp) {
+            if (!resp || resp === TBUtils.WIKI_PAGE_UNKNOWN || resp === TBUtils.NO_WIKI_PAGE || resp.length < 1) return;
+            $(resp.notes).each(function () {
                 TBUtils.showNote(this);
             });
         });

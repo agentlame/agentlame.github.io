@@ -328,7 +328,7 @@ img.sticky-close {
     color: #000;
     padding: 2px !important;
     border: solid 1px #A8B5C2;
-	top: auto;
+    top: auto;
     box-shadow: #D1D1D1 0px 1px 3px 1px;
 }
 
@@ -432,6 +432,20 @@ img.sticky-close {
 
 .utagger-notes .utagger-notes-td3 {
     border: 0;
+}
+
+.utagger-type {
+    border: 1px solid #C1BFBF;
+    margin-top: 2px;
+    width: 100%;
+}
+        
+.utagger-type td { 
+    padding: 1px 3px 3px; 
+}
+
+#add-user-tag { 
+    cursor: pointer;
 }
 
 .mod-popup {
@@ -662,6 +676,70 @@ img.sticky-close {
 .edit-wikidata {
     width: 99%;
     font: normal small verdana,arial,helvetica,sans-serif;
+    -webkit-appearance: textarea;
+    background-color: white;
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    -webkit-flex-direction: column;
+    resize: auto;
+    cursor: auto;
+    padding: 2px !important;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.tb-debug-window {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 700px;
+    height: 260px;
+    padding: 0px !important;
+    background-color: #FFF;
+    border: solid 1px #808080;
+    box-shadow: 0px 1px 3px 1px #D6D6D6;
+}
+
+.tb-debug-header {
+    right: 0px;
+    left: 0px;
+    display: block;
+    background-color: #CEE3F8;
+    text-align: center;
+    font-weight: bold;
+    padding: 4px !important;
+    font-size: small;
+    border-bottom: solid 1px #A8B5C2;
+}
+
+.tb-debug-content {
+    overflow: auto;
+    left: 0px;
+    right: 0px;
+    padding: 5px !important;
+}
+
+.tb-debug-footer {
+    width: 100%;
+    height: 15px;
+    line-height: 30px;
+    display: block;
+    background-color: #CEE3F8;
+    text-align: center;
+    border-top: solid 1px #A8B5C2;
+}
+
+.tb-debug-header-options {
+    display: inline-block;
+    float: right;
+    position: relative;
+}
+
+.tb-debug-console {
+    width: 98%;
+    height: 200px;
+    font: normal small CONSOLAS, COURIER,"COURIER NEW";
     -webkit-appearance: textarea;
     background-color: white;
     border: 1px solid;
