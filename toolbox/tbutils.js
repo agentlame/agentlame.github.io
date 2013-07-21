@@ -216,12 +216,11 @@
             if (TBUtils.browser == 'chrome' && TBUtils.isExtension) show();
             break;
         case 'script':
-            console.log('script');
             if (!TBUtils.isExtension) show();
             break;
         case 'all':
-            show();
-            break;
+            //show();
+            //break;
         default:
             show();
         }
