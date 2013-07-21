@@ -219,8 +219,6 @@
             if (!TBUtils.isExtension) show();
             break;
         case 'all':
-            //show();
-            //break;
         default:
             show();
         }
