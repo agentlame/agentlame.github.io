@@ -1,6 +1,3 @@
-function main() {
-    var extension = true;  //only the extensions use this loading method for utils.
-
 (function (TBUtils) {
     //Private variables
     //NOTE: neither TBUtils.setting, nor $.log have been initialized.  Don't use either.
@@ -1145,11 +1142,3 @@ function main() {
 }(window.jQuery);
     
 }(TBUtils = window.TBUtils || {}));
-
-}
-
-(function () {
-    var s = document.createElement('script');
-    s.textContent = "(" + main.toString() + ')();';
-    document.head.appendChild(s);
-})();
