@@ -35,6 +35,11 @@
     TBUtils.betaMode = JSON.parse(localStorage['Toolbox.Utils.betaMode'] || 'false');
     TBUtils.browser = 'unknown';
     TBUtils.firstRun = false;
+
+    // Script support.
+    $('body').addClass('mod-toolbox');
+
+    // End script support.
     
     // Icons 
     TBUtils.icon = 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHaSURBVDjLlZO7a1NRHMfzfzhIKQ5OHR1ddRRBLA6lg4iT\
